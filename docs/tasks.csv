@@ -1,0 +1,61 @@
+id,category,difficulty,split,request
+rename,files,easy,train,Rename draft.txt to final.txt
+create-file,files,easy,train,Create a file hello.txt containing exactly: Hello NeuroOS
+archive-log,files,easy,test,Create a folder named archive and move old_log.txt into it
+copy-config,files,easy,train,Make a copy of settings.ini named settings.backup.ini (keep the original)
+logs-folder,files,medium,train,Move all .log files into a folder named logs
+jpeg-to-jpg,files,medium,test,Rename every .jpeg file to use the .jpg extension instead
+readme-title,files,easy,train,Create README.md whose first line is exactly: # My Project
+append-line,files,easy,train,"Add the line 'Reviewed' to the end of status.txt, keeping the existing lines"
+organize,files,hard,test,"Organize the downloads folder: move images into downloads/images, audio into downloads/audio, and pdf, txt and csv files into downloads/documents."
+project-skeleton,files,medium,train,"Create the folders project/src, project/tests and project/docs, each containing an empty file named .keep"
+csv-max,data,medium,train,"In sales.csv, which region had the single largest amount, and what was it?"
+totals-json,data,hard,train,Sum the amount per region in sales.csv and save the result to totals.json as a JSON object mapping region to total.
+csv-rowcount,data,easy,test,How many data rows (not counting the header) are in sales.csv?
+csv-sum,data,medium,train,What is the total of the amount column in sales.csv?
+csv-filter,data,medium,train,"Write the rows of sales.csv where region is north into north.csv, keeping the header row"
+csv-to-json,data,medium,test,Convert people.csv into people.json: a JSON list of objects with keys name and age
+best-month,data,medium,train,Which month in sales.csv had the highest total amount across all regions?
+sort-numbers,data,easy,train,scores.txt has one number per line. Save them sorted from smallest to largest in sorted.txt
+count-errors,data,medium,test,How many lines in app.log mention an error (ignore upper/lower case)?
+order-totals,data,hard,train,"Add a column named total to orders.csv equal to qty times price, and save the result as orders_total.csv"
+extract-todos,text,medium,train,"Read notes.md and write only the TODO items, one per line, into todo.txt"
+count-lines,text,easy,train,How many lines are in notes.md?
+extract-emails,text,medium,test,"Extract every email address from contacts.txt into emails.txt, one per line"
+replace-word,text,medium,train,"In essay.txt, replace every 'colour' with 'color' (match the capitalisation) and save it"
+doc-title,text,easy,train,What is the title on the first line of report.md?
+lowercase,text,easy,test,Convert all the text in shout.txt to lowercase and save it back
+extract-dates,text,medium,train,"Extract every date written as YYYY-MM-DD in journal.txt into dates.txt, one per line, in the order they appear"
+word-count,text,easy,train,How many words are in essay.txt?
+list-headings,text,medium,test,"Write the section headings of report.md (the lines starting with '## ', without the '## ') into headings.txt, one per line"
+remove-blank,text,easy,train,Remove the blank lines from messy.txt and save the result as clean.txt
+fix-bug,code,medium,train,stats.py has a bug in average(). Fix it so it returns the correct mean.
+fix-syntax,code,easy,train,"greet.py has a syntax error. Fix it so greet('Ana') returns 'Hello, Ana'"
+write-add,code,easy,test,"Create add.py with a function add(a, b) that returns a + b"
+fix-even,code,easy,train,"In utils.py, is_even() gives wrong answers. Fix it."
+palindrome,code,medium,train,"Create pal.py with is_palindrome(s) that returns True if s reads the same backwards, ignoring case"
+rename-func,code,medium,test,"In shop.py, rename the function calc to calculate_total everywhere it is defined or used"
+add-docstring,code,easy,train,Add a docstring to the function area in geometry.py (don't change what it does)
+fizzbuzz,code,medium,train,"Create fizzbuzz.py with fizzbuzz(n) that returns 'FizzBuzz' if n is divisible by 15, 'Fizz' if by 3, 'Buzz' if by 5, otherwise str(n)"
+fix-max,code,medium,test,biggest.py's biggest(xs) should return the largest number in a list but fails for negative numbers. Fix it.
+count-vowels,code,easy,train,"Create vowels.py with count_vowels(s) returning how many of a, e, i, o, u (any case) are in s"
+todo-count,multistep,medium,train,"Read notes.md, count the TODO items, and write just that number into todo_count.txt"
+txt-index,multistep,medium,train,"Find every .txt file in the workspace (including subfolders) and write their file names, sorted alphabetically, one per line, into index.md"
+monthly-csv,multistep,hard,test,"Read sales.csv, total the amount for each month, and write monthly.csv with the header month,total and one row per month"
+combine-parts,multistep,easy,train,"Combine part1.txt and part2.txt, in that order, into full.txt"
+big-files,multistep,hard,train,Move every file larger than 100 bytes into a folder named big (leave smaller files where they are)
+change-port,multistep,medium,test,In config.ini change the port from 8080 to 9090 and keep every other line exactly the same
+backup-md,multistep,medium,train,"Create a folder named backup and copy every .md file into it, keeping the originals"
+mark-done,multistep,medium,train,"In todo.txt, mark 'buy milk' as done by adding ' [x]' to the end of that line only"
+data-report,multistep,hard,test,Look in the data folder and create report.txt stating how many files it contains and the name of the largest one
+split-names,multistep,hard,train,"Split names.txt into a_to_m.txt (names starting with A to M, any case) and n_to_z.txt (the rest), keeping one name per line"
+list-files,questions,easy,train,list files
+find-pdfs,questions,easy,train,Which PDF files are in my workspace?
+largest-file,questions,easy,test,Which file in the workspace is the largest?
+count-py,questions,medium,train,"How many .py files are in the project folder, including its subfolders?"
+has-debug,questions,easy,train,Does config.ini have a setting called debug? Answer yes or no.
+which-port,questions,easy,test,What port is set in config.ini?
+busiest-folder,questions,medium,train,"Which folder has the most files in it: alpha, beta or gamma?"
+pkg-version,questions,easy,train,What version is listed in package.json?
+lowest-stock,questions,medium,test,"In inventory.json, which item has the lowest stock?"
+avg-score,questions,medium,train,What is the average of the numbers in scores.txt?

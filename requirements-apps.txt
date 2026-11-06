@@ -1,0 +1,7 @@
+# Optional: documents and Google Docs support for NeuroOS Apps
+python-docx
+openpyxl
+pypdf
+fpdf2
+google-api-python-client
+google-auth-oauthlib

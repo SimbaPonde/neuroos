@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.pytest_cache/
+bench/results/
+*.zip
+notes.md
+neither.txt
