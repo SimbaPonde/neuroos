@@ -817,3 +817,28 @@ def test_google_doc_requests_and_indexes():
     style = r[1]["updateTextStyle"]["range"]
     assert style["endIndex"] - style["startIndex"] == len("NeuroOS: Traduction 😀".encode("utf-16-le")) // 2
     assert r[2]["insertText"]["location"]["index"] == paras[1].end_index - 1
+
+
+def test_search_fallbacks_and_blocked_message(monkeypatch):
+    import json as _json
+    import neuroos.apps as A
+    lite = ("<table><tr><td><a rel=\"nofollow\" href=\"https://ollama.com/library/qwen3\" class='result-link'>"
+            "qwen3</a></td></tr><tr><td class='result-snippet'>Qwen3 models</td></tr></table>")
+    wiki = _json.dumps({"query": {"search": [{"title": "Qwen (language model)", "snippet": "a <b>family</b>"}]}})
+    def fake(pages):
+        def f(url, timeout=20):
+            for key, body in pages.items():
+                if key in url:
+                    return body, "text/html"
+            raise OSError("no route")
+        return f
+    blocked_page = "<html>... anomaly-modal ...</html>"
+    monkeypatch.setattr(A, "_fetch", fake({"html.duck": blocked_page, "lite.duck": lite}))
+    out = A.web_search("qwen ollama")
+    assert "ollama.com/library/qwen3" in out and "DuckDuckGo lite" in out
+    monkeypatch.setattr(A, "_fetch", fake({"html.duck": blocked_page, "lite.duck": blocked_page, "wikipedia": wiki}))
+    out = A.web_search("qwen")
+    assert "Qwen (language model)" in out and "blocked by a bot check" in out
+    monkeypatch.setattr(A, "_fetch", fake({"html.duck": blocked_page, "lite.duck": blocked_page}))
+    out = A.web_search("qwen")
+    assert out.startswith("Error: web search unavailable") and "not a sign that nothing exists" in out

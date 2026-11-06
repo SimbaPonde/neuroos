@@ -255,14 +255,63 @@ def parse_ddg(body: str, limit: int = 8) -> list[dict]:
     return out
 
 
+def blocked(body: str) -> bool:
+    b = body.lower()
+    return "anomaly" in b or "captcha" in b or "unusual traffic" in b or "are you a robot" in b
+
+
+def parse_ddg_lite(body: str, limit: int = 8) -> list[dict]:
+    out = []
+    links = re.findall(r"<a[^>]+href=[\"']([^\"']+)[\"'][^>]*class=[\"']result-link[\"'][^>]*>(.*?)</a>"
+                       r"|<a[^>]+class=[\"']result-link[\"'][^>]*href=[\"']([^\"']+)[\"'][^>]*>(.*?)</a>", body, re.S)
+    snippets = re.findall(r"class=[\"']result-snippet[\"'][^>]*>(.*?)</td>", body, re.S)
+    clean = lambda x: html.unescape(re.sub(r"<[^>]+>", "", x or "")).strip()
+    for i, (h1, t1, h2, t2) in enumerate(links[:limit]):
+        href = html.unescape(h1 or h2)
+        q = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
+        out.append({"title": clean(t1 or t2), "url": q.get("uddg", [href])[0],
+                    "snippet": clean(snippets[i]) if i < len(snippets) else ""})
+    return out
+
+
+def parse_wikipedia(data: dict, limit: int = 8) -> list[dict]:
+    out = []
+    for r in (data.get("query", {}).get("search") or [])[:limit]:
+        title = r.get("title", "")
+        out.append({"title": title, "url": "https://en.wikipedia.org/wiki/" + urllib.parse.quote(title.replace(" ", "_")),
+                    "snippet": html.unescape(re.sub(r"<[^>]+>", "", r.get("snippet", "")))})
+    return out
+
+
 def web_search(query: str) -> str:
-    url = "https://html.duckduckgo.com/html/?" + urllib.parse.urlencode({"q": query})
+    """DuckDuckGo (html, then lite); if both are blocked or empty, Wikipedia. Says clearly when blocked."""
+    notes = []
+    q = urllib.parse.urlencode({"q": query})
+    for name, url, parser in (("DuckDuckGo", "https://html.duckduckgo.com/html/?" + q, parse_ddg),
+                              ("DuckDuckGo lite", "https://lite.duckduckgo.com/lite/?" + q, parse_ddg_lite)):
+        try:
+            body, _ = _fetch(url)
+        except Exception as e:
+            notes.append(f"{name}: {type(e).__name__}")
+            continue
+        res = parser(body)
+        if res:
+            return untrusted(f"web search results ({name})", _fmt_results(res))
+        notes.append(f"{name}: {'blocked by a bot check' if blocked(body) else 'no results'}")
     try:
-        body, _ = _fetch(url)
+        import json as _json
+        body, _ = _fetch("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(
+            {"action": "query", "list": "search", "srsearch": query, "format": "json", "srlimit": 8}))
+        res = parse_wikipedia(_json.loads(body))
+        if res:
+            return untrusted("Wikipedia search results (general web search was unavailable: "
+                             + "; ".join(notes) + ")", _fmt_results(res))
+        notes.append("Wikipedia: no results")
     except Exception as e:
-        return f"Error: search failed: {type(e).__name__}: {e}"
-    res = parse_ddg(body)
-    if not res:
-        return "No results (the search page may have changed or blocked the request)."
-    return untrusted("web search results",
-                     "\n".join(f"{i + 1}. {r['title']}\n   {r['url']}\n   {r['snippet']}" for i, r in enumerate(res)))
+        notes.append(f"Wikipedia: {type(e).__name__}")
+    return ("Error: web search unavailable (" + "; ".join(notes) + "). This is a problem reaching the search "
+            "services, not a sign that nothing exists. Tell the user the search could not be done.")
+
+
+def _fmt_results(res: list[dict]) -> str:
+    return "\n".join(f"{i + 1}. {r['title']}\n   {r['url']}\n   {r['snippet']}" for i, r in enumerate(res))

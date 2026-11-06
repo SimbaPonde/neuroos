@@ -6,4 +6,4 @@ local model, or cloud), runs tools on your behalf behind a permission gate, and
 logs energy, latency and success for every task.
 """
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
